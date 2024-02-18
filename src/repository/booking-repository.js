@@ -4,11 +4,14 @@ const { AppError, ValidationError } = require('../utils/errors/index');
 
 
 class BookingRepository {
-    async create() {
+    async create(data) {
         try {
-            const booking = await Booking.create();
+            console.log("data",data)
+            const booking = await Booking.create(data);
+            console.log("booking", booking);
             return booking;
         } catch (error) {
+            console.log("error", error);
             if (error.name === 'SequelizeValidationError') {
                 throw new ValidationError(error);
             }
@@ -20,10 +23,14 @@ class BookingRepository {
             );
         }
     }
-    async update(data){
+    async update(bookingId, data){
         try {
-            const booking = await Booking.update(data);
-            return booking;
+          const booking = await Booking.findByPk(bookingId);
+          if(data.status) {
+            booking.status = data.status;
+          }
+          await booking.save();
+          return booking;
         } catch (error) {
             if (error.name === 'SequelizeValidationError') {
                 throw new ValidationError(error);
@@ -37,3 +44,5 @@ class BookingRepository {
         }
     }
 }
+
+module.exports = BookingRepository;

@@ -5,7 +5,7 @@ class ValidationError extends Error {
     {
         super(error);
         let explanation = [];
-        error.errors.forEach((err) => {
+        error.errors.forEach((err) => {   // sequelize return error in this form
             explanation.push(err.message);
         });
     

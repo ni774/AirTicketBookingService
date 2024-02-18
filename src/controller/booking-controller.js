@@ -6,6 +6,10 @@ const bookingService = new BookingService();
 const create = async ( req, res )=> {
     try {
         const response = await bookingService.createBooking(req.body);
+        
+       // console.log("response from booking controller: "+ response); //will give [object][object] because of coarcion
+        // console.log("response from booking controller: ",response); //will directly concatinate
+        
         return res.status(StatusCodes.OK).json({
             message: 'Successfully completed booking',
             success: true,
@@ -13,6 +17,7 @@ const create = async ( req, res )=> {
             data: response
         })
     } catch (error) {
+        console.log("error from booking controller: ",error);
         return res.status(error.statusCode).json({
             message: error.message,
             success: false,
