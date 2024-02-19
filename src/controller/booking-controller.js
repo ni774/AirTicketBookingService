@@ -28,6 +28,28 @@ const create = async ( req, res )=> {
 
 }
 
+const update = async (req,res) => {
+    try {
+        console.log(req.params.id);
+        const response = await bookingService.updateBooking(req.params.id);
+        return res.status(StatusCodes.OK).json({
+            message: 'Successfully updated booking',
+            success: true,
+            err: {},
+            data: response
+        })
+    } catch (error) {
+        console.log("error from booking controller: ",error);
+        return res.status(error.statusCode).json({
+            message: error.message,
+            success: false,
+            err: error.explanation,
+            data: {}
+        });
+    }
+}
+
 module.exports = {
-    create
+    create,
+    update,
 }

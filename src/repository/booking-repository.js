@@ -6,9 +6,9 @@ const { AppError, ValidationError } = require('../utils/errors/index');
 class BookingRepository {
     async create(data) {
         try {
-            console.log("data",data)
+            // console.log("data",data)
             const booking = await Booking.create(data);
-            console.log("booking", booking);
+            // console.log("booking", booking);
             return booking;
         } catch (error) {
             console.log("error", error);
@@ -27,10 +27,10 @@ class BookingRepository {
         try {
           const booking = await Booking.findByPk(bookingId);
           if(data.status) {
-            booking.status = data.status;
+            booking.status = data.status
           }
           await booking.save();
-          return booking;
+          return booking.toJSON();   // to get only raw data
         } catch (error) {
             if (error.name === 'SequelizeValidationError') {
                 throw new ValidationError(error);

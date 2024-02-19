@@ -9,4 +9,9 @@ router.post(
   bookingController.create
 );
 
+router.patch(
+  "/update/:id",
+  bookingController.update
+)
+
 module.exports = router;
