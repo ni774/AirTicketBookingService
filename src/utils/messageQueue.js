@@ -1,21 +1,26 @@
 const amqplib = require('amqplib');
-const { MEsSAGE_BROKER_URL, EXCHANGE_NAME } = require('../config/serverConfig');
+const { MESSAGE_BROKER_URL, EXCHANGE_NAME } = require('../config/serverConfig');
 
 const createChannel = async ()=> {
     try {
-        const connection = await  amqplib.connect(MEsSAGE_BROKER_URL);
+        const connection = await  amqplib.connect(MESSAGE_BROKER_URL);
+        // console.log("done1");
         const channel = await connection.createChannel();
-        await channel.assertExchange(EXCHANGE_NAME, 'ditect', false);
+        // console.log("done2",EXCHANGE_NAME, channel);
+        await channel.assertExchange(EXCHANGE_NAME, 'direct',  {
+            durable: false
+        });
         return channel;
 
     } catch (error) {
+        console.log("error in message queue fn");
         throw error;
     }
 }
 
 const subscribeMessage = async (channel, service, binding_key) => {
     try {
-        const applicationQueue = await channel.assertQueue('QUEUE_NAME');
+        const applicationQueue = await channel.assertQueue("REMINDER_NAME");
         channel.bindQueue(applicationQueue.queue, EXCHANGE_NAME, binding_key);
 
         channel.consume(applicationQueue.queue, (msg) => {
@@ -31,8 +36,9 @@ const subscribeMessage = async (channel, service, binding_key) => {
 
 const publishMessage = async ( channel, binding_key, message) => {
     try {
-        await channel.assertQueue('QUEUE_NAME');
+        await channel.assertQueue('REMINDER_NAME');
         await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
+        // console.log(message);
 
     } catch (error) {
         throw error;
